@@ -51,7 +51,7 @@ func top162CommonPairs(source []byte) (topK [162]string){
 	}
 
 	sort.Sort(sort.Reverse(pairs))
-	for i := 0; i < 162; i++ {
+	for i := 0; i < len(pairs); i++ {
 		topK[i] = pairs[i].Key
 	}
 	return topK
@@ -116,8 +116,7 @@ func main() {
 		dict[i] = a[i - 94]
 	}
 	generateMap()
-	// fmt.Printf("%v", dict_map)
-	// fmt.Printf("%s", bitstring)
+
 	bitstring := encode(source)
 	fmt.Printf("Compression ratio %v\n", ((float64(len(source) * 8)) / float64(len(bitstring))))
 }

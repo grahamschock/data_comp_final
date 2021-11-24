@@ -1,3 +1,4 @@
+
 package main
 import (
 	"fmt"
@@ -51,7 +52,7 @@ func top162CommonPairs(source []byte) (topK [162]string){
 	}
 
 	sort.Sort(sort.Reverse(pairs))
-	for i := 0; i < len(pairs); i++ {
+	for i := 0; i < len(pairs) && i < 162; i++ {
 		topK[i] = pairs[i].Key
 	}
 	return topK
@@ -61,18 +62,21 @@ func top162CommonPairs(source []byte) (topK [162]string){
 //read a 2 char input
 //if in dictionary, encode
 //if not in dictionary encode first char then add second char to digram. repeat
-func encode(source []byte) (string) {
+func encode(source []byte) (string, int) {
+	digram_size := 0
 	var builder strings.Builder
 	for i := 0; i < len(source); {
 		if (digramInDict(source[i:i+2])) {
 			fmt.Fprintf(&builder, "%s", encodeDigram(source[i:i+2]))
 			i += 2
+			digram_size++
 		} else { //the digram is not in dict
 			fmt.Fprintf(&builder, "%s", encodeSingle(source[i]))
 			i++
+			digram_size++
 		}
 	}
-	return builder.String()
+	return builder.String(), digram_size
 }
 
 func digramInDict(digram []byte) (bool){
@@ -105,9 +109,9 @@ func generateMap() {
 	}
 }
 
-func main() {
+func Digram(sourcedir string) {
 	genASCIIDict()
-	source, err := os.ReadFile("data/sources.100MB")
+	source, err := os.ReadFile(sourcedir)
 	if err != nil {
 		panic(err)
 	}
@@ -117,6 +121,6 @@ func main() {
 	}
 	generateMap()
 
-	bitstring := encode(source)
-	fmt.Printf("Compression ratio %v\n", ((float64(len(source) * 8)) / float64(len(bitstring))))
+	_, di_size:= encode(source)
+	fmt.Printf("Compression ratio: %v\n", ((float64(len(source) * 8)) / float64(di_size * 8)))
 }
